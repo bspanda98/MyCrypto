@@ -3,7 +3,6 @@ export const settings = {
   darkMode: false,
   dashboardAccounts: [],
   inactivityTimer: 1800000,
-  lastAssetUpdate: 0,
   rates: {},
   language: 'en'
 };
