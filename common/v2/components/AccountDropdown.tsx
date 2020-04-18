@@ -22,9 +22,10 @@ interface IAccountDropdownProps {
 type Option = StoreAccount & { balance: string; assetSymbol: string };
 
 function AccountDropdown({ accounts, name, value, onSelect, asset }: IAccountDropdownProps) {
-  const relevantAccounts: Option[] = accounts.map(account => ({
+  const relevantAccounts: Option[] = accounts.map((account) => ({
     ...account,
     balance: formatEther(asset ? getAccountBalance(account, asset) : getAccountBalance(account)),
+    assetUUID: asset ? asset.uuid : getBaseAsset(account)!.uuid,
     assetSymbol: asset ? asset.ticker : getBaseAsset(account)!.ticker
   }));
 
@@ -40,16 +41,17 @@ function AccountDropdown({ accounts, name, value, onSelect, asset }: IAccountDro
       name={name}
       placeholder={translateRaw('ACCOUNT_SELECTION_PLACEHOLDER')}
       options={relevantAccounts}
-      onChange={option => onSelect(option)}
+      onChange={(option) => onSelect(option)}
       optionComponent={AccountOption}
       value={value && value.address ? value : undefined} // Allow the value to be undefined at the start in order to display the placeholder
-      valueComponent={({ value: { uuid, label, address, balance, assetSymbol } }) => {
-        const option = relevantAccounts.find(a => a.uuid === uuid);
+      valueComponent={({ value: { uuid, label, address, balance, assetSymbol, assetUUID } }) => {
+        const option = relevantAccounts.find((a) => a.uuid === uuid);
         return (
           <AccountSummary
             address={address}
             balance={option ? option.balance : balance}
             label={label}
+            uuid={assetUUID}
             assetSymbol={option ? option.assetSymbol : assetSymbol}
           />
         );

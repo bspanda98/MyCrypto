@@ -15,7 +15,6 @@ import {
   ITxReceipt,
   ITxStatus,
   IStepComponentProps,
-  TSymbol,
   ITxType,
   TAddress,
   ExtendedAddressBook
@@ -104,18 +103,23 @@ export default function TxReceipt({
     if (displayTxReceipt && blockNumber === 0 && displayTxReceipt.hash) {
       const provider = new ProviderHandler(displayTxReceipt.network || txConfig.network);
       const blockNumInterval = setInterval(() => {
-        getTransactionReceiptFromHash(displayTxReceipt.hash, provider).then(transactionOutcome => {
-          if (transactionOutcome) {
-            const transactionStatus =
-              transactionOutcome.status === 1 ? ITxStatus.SUCCESS : ITxStatus.FAILED;
-            setTxStatus(prevStatusState => transactionStatus || prevStatusState);
-            setBlockNumber((prevState: number) => transactionOutcome.blockNumber || prevState);
-            provider.getTransactionByHash(displayTxReceipt.hash).then(transactionReceipt => {
-              const receipt = fromTxReceiptObj(transactionReceipt)(assets, networks) as ITxReceipt;
-              setDisplayTxReceipt(receipt);
-            });
+        getTransactionReceiptFromHash(displayTxReceipt.hash, provider).then(
+          (transactionOutcome) => {
+            if (transactionOutcome) {
+              const transactionStatus =
+                transactionOutcome.status === 1 ? ITxStatus.SUCCESS : ITxStatus.FAILED;
+              setTxStatus((prevStatusState) => transactionStatus || prevStatusState);
+              setBlockNumber((prevState: number) => transactionOutcome.blockNumber || prevState);
+              provider.getTransactionByHash(displayTxReceipt.hash).then((transactionReceipt) => {
+                const receipt = fromTxReceiptObj(transactionReceipt)(
+                  assets,
+                  networks
+                ) as ITxReceipt;
+                setDisplayTxReceipt(receipt);
+              });
+            }
           }
-        });
+        );
       }, 1000);
       return () => clearInterval(blockNumInterval);
     }
@@ -124,7 +128,7 @@ export default function TxReceipt({
     if (displayTxReceipt && timestamp === 0 && blockNumber !== 0) {
       const provider = new ProviderHandler(displayTxReceipt.network || txConfig.network);
       const timestampInterval = setInterval(() => {
-        getTimestampFromBlockNum(blockNumber, provider).then(transactionTimestamp => {
+        getTimestampFromBlockNum(blockNumber, provider).then((transactionTimestamp) => {
           if (sender.account) {
             addNewTransactionToAccount(sender.account, {
               ...displayTxReceipt,
@@ -256,7 +260,7 @@ export const TxReceiptUI = ({
     <div className="TransactionReceipt">
       {protectTxEnabled && !web3Wallet && (
         <ProtectTxAbort
-          onTxSent={txReceipt => {
+          onTxSent={(txReceipt) => {
             if (setDisplayTxReceipt) {
               setDisplayTxReceipt(txReceipt);
             }
@@ -275,6 +279,8 @@ export const TxReceiptUI = ({
             toSymbol={swapDisplay.toAsset.symbol}
             fromAmount={swapDisplay.fromAmount.toString()}
             toAmount={swapDisplay.toAmount.toString()}
+            fromUUID={swapDisplay.fromAsset.uuid}
+            toUUID={swapDisplay.toAsset.uuid}
           />
         </div>
       )}
@@ -337,7 +343,7 @@ export const TxReceiptUI = ({
             {translate('CONFIRM_TX_SENT')}
           </div>
           <div className="TransactionReceipt-row-column rightAligned">
-            <AssetIcon symbol={asset.ticker as TSymbol} size={'24px'} />
+            <AssetIcon uuid={asset.uuid} size={'24px'} />
             <Amount
               assetValue={`${parseFloat(assetAmount()).toFixed(6)} ${assetTicker()}`}
               fiatValue={`$${convertToFiat(parseFloat(assetAmount()), assetRate()).toFixed(2)}
