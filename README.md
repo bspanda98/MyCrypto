@@ -17,6 +17,10 @@ This repo stores both the beta and production versions of the MyCrypto codebase.
 - [MyCryptoBuilds](https://github.com/MyCryptoHQ/MyCrypto/wiki/MyCryptoBuilds) - access a build by commithash, PR number, or branch name without building it yourself!
 - [Enabling or disabling experimental features](https://github.com/MyCryptoHQ/MyCrypto/wiki/Feature-flags)
 
+```
+nvm install 12.14.1
+```
+
 ## Development / Build Requirements
 
 - Node 12.14.1\*
