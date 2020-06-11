@@ -19,6 +19,7 @@ This repo stores both the beta and production versions of the MyCrypto codebase.
 
 ```
 nvm install 12.14.1
+nvm use 12
 cd MyCrypto
 yarn install
 ```
